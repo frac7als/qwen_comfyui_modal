@@ -170,4 +170,4 @@ def ui():
 @app.function(volumes={"/cache": vol})
 def list_custom_nodes():
     import os
-    return os.listdir("/root/comfy/ComfyUI/custom_nodes"
+    return os.listdir("/root/comfy/ComfyUI/custom_nodes")
