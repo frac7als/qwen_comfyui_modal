@@ -38,7 +38,7 @@ image = (
 )
 
 # ------------------------------
-# Custom Nodes (git-cloned; idempotent)
+# Custom Nodes (git-cloned; idempotent) with dependency installation
 # ------------------------------
 image = image.run_commands(
     "mkdir -p /root/comfy/ComfyUI/custom_nodes",
@@ -54,6 +54,18 @@ image = image.run_commands(
     "bash -lc 'cd /root/comfy/ComfyUI/custom_nodes && if [ ! -d ComfyUI-Miaoshouai-Tagger ]; then git clone https://github.com/miaoshouai/ComfyUI-Miaoshouai-Tagger.git; fi'",
     # ComfyLiterals
     "bash -lc 'cd /root/comfy/ComfyUI/custom_nodes && if [ ! -d ComfyLiterals ]; then git clone https://github.com/M1kep/ComfyLiterals.git; fi'",
+    
+    # Install dependencies for custom nodes
+    "bash -lc 'cd /root/comfy/ComfyUI/custom_nodes && for dir in */; do if [ -f \"$dir/requirements.txt\" ]; then echo \"Installing requirements for $dir\"; pip install -r \"$dir/requirements.txt\" || echo \"Failed to install requirements for $dir\"; fi; done'",
+    
+    # Install common dependencies that custom nodes often need
+    "pip install opencv-python-headless pillow numpy scipy torch torchvision torchaudio transformers diffusers accelerate",
+    
+    # Specific dependencies for some of your custom nodes
+    "pip install segment-anything timm ultralytics",
+    
+    # For efficiency nodes
+    "pip install simpleeval numexpr",
 )
 
 # ------------------------------
@@ -155,23 +167,92 @@ app = modal.App(name="comfyui-qwen-image-edit", image=image)
     max_containers=1,
     gpu="L40S",
     volumes={"/cache": vol},
+    timeout=300,  # Increased timeout for startup
 )
 @modal.concurrent(max_inputs=10)
-@modal.web_server(8000, startup_timeout=60)
+@modal.web_server(8000, startup_timeout=120)  # Increased startup timeout
 def ui():
     # Launch ComfyUI listening on 0.0.0.0:8000
+    # Add verbose flag to see what's happening during startup
     subprocess.Popen(
-        "comfy launch -- --listen 0.0.0.0 --port 8000",
+        "comfy launch -- --listen 0.0.0.0 --port 8000 --verbose",
         shell=True,
     )
 
 # ------------------------------------------------------------
-# Debug helper: list installed custom nodes
+# Debug helpers
 # ------------------------------------------------------------
 @app.function(volumes={"/cache": vol})
 def list_custom_nodes():
     import os, json
     listing = os.listdir("/root/comfy/ComfyUI/custom_nodes")
-    print("custom_nodes:", json.dumps(listing))  # shows up in Modal logs
-    return listing  # will also show in terminal output when you run it
+    print("custom_nodes:", json.dumps(listing))
+    return listing
 
+@app.function(volumes={"/cache": vol})
+def debug_node_loading():
+    """Debug function to check if custom nodes are loading properly"""
+    import os
+    import sys
+    
+    # Check if custom nodes directory exists and list contents
+    custom_nodes_path = "/root/comfy/ComfyUI/custom_nodes"
+    if os.path.exists(custom_nodes_path):
+        print(f"Custom nodes directory exists at: {custom_nodes_path}")
+        for node_dir in os.listdir(custom_nodes_path):
+            node_path = os.path.join(custom_nodes_path, node_dir)
+            if os.path.isdir(node_path):
+                print(f"Node directory: {node_dir}")
+                # Check for __init__.py or main Python files
+                python_files = [f for f in os.listdir(node_path) if f.endswith('.py')]
+                print(f"  Python files: {python_files}")
+                
+                # Check for requirements.txt
+                req_file = os.path.join(node_path, 'requirements.txt')
+                if os.path.exists(req_file):
+                    print(f"  Has requirements.txt")
+                else:
+                    print(f"  No requirements.txt found")
+    
+    # Try to import ComfyUI and see what happens
+    try:
+        sys.path.insert(0, "/root/comfy/ComfyUI")
+        import execution
+        print("ComfyUI execution module imported successfully")
+    except Exception as e:
+        print(f"Error importing ComfyUI: {e}")
+    
+    return "Debug complete"
+
+# Alternative minimal startup function for testing
+@app.function(
+    max_containers=1,
+    gpu="L40S", 
+    volumes={"/cache": vol},
+)
+def test_comfy_startup():
+    """Test ComfyUI startup without web server to see error messages"""
+    import subprocess
+    
+    print("Testing ComfyUI startup...")
+    
+    # Try to start ComfyUI and capture output
+    result = subprocess.run(
+        "cd /root/comfy && python ComfyUI/main.py --cpu --listen 127.0.0.1 --port 8188",
+        shell=True,
+        capture_output=True,
+        text=True,
+        timeout=60
+    )
+    
+    print("STDOUT:")
+    print(result.stdout)
+    print("STDERR:")  
+    print(result.stderr)
+    print(f"Return code: {result.returncode}")
+    
+    return {
+        "stdout": result.stdout,
+        "stderr": result.stderr,
+        "returncode": result.returncode
+    }
