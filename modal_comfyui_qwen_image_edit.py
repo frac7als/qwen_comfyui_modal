@@ -143,7 +143,17 @@ def hf_download():
         shell=True,
         check=True,
     )
-
+    # ESRGAN Upscaler: ITF SkinDiff Detail Lite v1
+    esrgan_model = hf_hub_download(
+        repo_id="uwg/upscaler",
+        filename="ESRGAN/1x-ITF-SkinDiffDetail-Lite-v1.pth",
+        cache_dir="/cache",
+    )
+    subprocess.run(
+        f"ln -sf {esrgan_model} {os.path.join(upscale_dir, '1x-ITF-SkinDiffDetail-Lite-v1.pth')}",
+        shell=True,
+        check=True,
+    )
 
 # Persist HF cache between runs
 vol = modal.Volume.from_name("hf-hub-cache", create_if_missing=True)
