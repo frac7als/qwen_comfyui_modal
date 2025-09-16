@@ -36,6 +36,26 @@ image = (
 )
 
 # ------------------------------
+# Custom Nodes (install by git clone; pinned to repos)
+# ------------------------------
+image = image.run_commands(
+    # Use conditional clones so rebuilds don't fail
+    "mkdir -p /root/comfy/ComfyUI/custom_nodes",
+    # rgthree-comfy
+    "bash -lc 'cd /root/comfy/ComfyUI/custom_nodes && if [ ! -d rgthree-comfy ]; then git clone https://github.com/rgthree/rgthree-comfy.git; fi'",
+    # efficiency-nodes-comfyui (maintained fork by jags111)
+    "bash -lc 'cd /root/comfy/ComfyUI/custom_nodes && if [ ! -d efficiency-nodes-comfyui ]; then git clone https://github.com/jags111/efficiency-nodes-comfyui.git; fi'",
+    # CG Use Everywhere
+    "bash -lc 'cd /root/comfy/ComfyUI/custom_nodes && if [ ! -d cg-use-everywhere ]; then git clone https://github.com/chrisgoringe/cg-use-everywhere.git; fi'",
+    # ComfyUI-MultiGPU (pollockjj)
+    "bash -lc 'cd /root/comfy/ComfyUI/custom_nodes && if [ ! -d ComfyUI-MultiGPU ]; then git clone https://github.com/pollockjj/ComfyUI-MultiGPU.git; fi'",
+    # ComfyUI-Miaoshouai-Tagger
+    "bash -lc 'cd /root/comfy/ComfyUI/custom_nodes && if [ ! -d ComfyUI-Miaoshouai-Tagger ]; then git clone https://github.com/miaoshouai/ComfyUI-Miaoshouai-Tagger.git; fi'",
+    # ComfyLiterals (M1kep)
+    "bash -lc 'cd /root/comfy/ComfyUI/custom_nodes && if [ ! -d ComfyLiterals ]; then git clone https://github.com/M1kep/ComfyLiterals.git; fi'",
+)
+
+# ------------------------------
 # Model downloads from Hugging Face
 # ------------------------------
 
