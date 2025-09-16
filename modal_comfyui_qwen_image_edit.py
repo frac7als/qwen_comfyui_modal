@@ -164,10 +164,14 @@ def ui():
         "comfy launch -- --listen 0.0.0.0 --port 8000",
         shell=True,
     )
+
+# ------------------------------------------------------------
+# Debug helper: list installed custom nodes
+# ------------------------------------------------------------
 @app.function(volumes={"/cache": vol})
 def list_custom_nodes():
     import os, json
     listing = os.listdir("/root/comfy/ComfyUI/custom_nodes")
-    print("custom_nodes:", json.dumps(listing))  # ensure it shows up in logs
-    return listing
+    print("custom_nodes:", json.dumps(listing))  # shows up in Modal logs
+    return listing  # will also show in terminal output when you run it
 
