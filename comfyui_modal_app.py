@@ -135,7 +135,7 @@ LENOVO_DEST = "/models/loras/lenovo.safetensors"
 
 # ---------- Class ----------
 @app.cls(
-    gpu=modal.gpu.L40S(count=1),
+    gpu="L40S",
     image=image,
     secrets=[modal.Secret.from_dict({"HF_TOKEN": os.environ.get("HF_TOKEN", "")})],
     volumes={"/models": MODELS_VOL, "/outputs": OUTPUTS_VOL},
@@ -274,7 +274,7 @@ class ComfyUIRunner:
         return {"prompt_id": prompt_id, "images": outputs}
 
 # ---------- Entrypoint for local dev ----------
-@app.function(gpu=modal.gpu.L40S(count=1), image=image, volumes={"/models": MODELS_VOL, "/outputs": OUTPUTS_VOL})
+@app.function(gpu="L40S", image=image, volumes={"/models": MODELS_VOL, "/outputs": OUTPUTS_VOL})
 def main(workflow_file: str = "/mnt/data/1shotDatasetQWEN ICekiub FREE.json"):
     """Convenience runner for `modal run` during development."""
     runner = ComfyUIRunner()
