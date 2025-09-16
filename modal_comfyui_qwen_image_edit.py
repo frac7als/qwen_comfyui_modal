@@ -151,7 +151,6 @@ image = (
 # ------------------------------
 app = modal.App(name="comfyui-qwen-image-edit", image=image)
 
-
 @app.function(
     max_containers=1,
     gpu="L40S",
@@ -165,3 +164,10 @@ def ui():
         "comfy launch -- --listen 0.0.0.0 --port 8000",
         shell=True,
     )
+# ------------------------------------------------------------
+# Debug helper: list installed custom nodes
+# ------------------------------------------------------------
+@app.function(volumes={"/cache": vol})
+def list_custom_nodes():
+    import os
+    return os.listdir("/root/comfy/ComfyUI/custom_nodes"
