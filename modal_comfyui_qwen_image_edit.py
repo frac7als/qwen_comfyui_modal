@@ -31,7 +31,7 @@ image = (
     # Install ComfyUI framework with NVIDIA support
     .run_commands(
         # install comfy
-        "comfy --skip-prompt install --fast-deps --nvidia",
+        "comfy --skip-prompt install --fast-deps --nvidia --version 0.3.59",
         # add KJNodes here
         "git clone https://github.com/kijai/ComfyUI-KJNodes.git /root/comfy/ComfyUI/custom_nodes/ComfyUI-KJNodes",
     )
