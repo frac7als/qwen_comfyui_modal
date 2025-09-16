@@ -74,18 +74,19 @@ image = image.run_commands(
 
 def hf_download():
     from huggingface_hub import hf_hub_download
+    import os, subprocess
 
     # Ensure model directories exist
     diffusion_dir = "/root/comfy/ComfyUI/models/diffusion_models"
     vae_dir = "/root/comfy/ComfyUI/models/vae"
     text_enc_dir = "/root/comfy/ComfyUI/models/text_encoders"
     lora_dir = "/root/comfy/ComfyUI/models/loras"
-    upscale_dir = "/root/comfy/ComfyUI/models/upscale_models"
+    upscale_dir = "/root/comfy/ComfyUI/models/upscale_models"  # <-- add this
     os.makedirs(diffusion_dir, exist_ok=True)
     os.makedirs(vae_dir, exist_ok=True)
     os.makedirs(text_enc_dir, exist_ok=True)
     os.makedirs(lora_dir, exist_ok=True)
-    os.makedirs(upscale_dir, exist_ok=True)
+    os.makedirs(upscale_dir, exist_ok=True)  # <-- and ensure it exists
 
     # Diffusion model: Qwen Image Edit (FP8 e4m3fn)
     qwen_edit = hf_hub_download(
@@ -95,8 +96,7 @@ def hf_download():
     )
     subprocess.run(
         f"ln -sf {qwen_edit} {os.path.join(diffusion_dir, 'qwen_image_edit_fp8_e4m3fn.safetensors')}",
-        shell=True,
-        check=True,
+        shell=True, check=True,
     )
 
     # Text encoder: Qwen VL 7B FP8 scaled
@@ -107,8 +107,7 @@ def hf_download():
     )
     subprocess.run(
         f"ln -sf {qwen_text} {os.path.join(text_enc_dir, 'qwen_2.5_vl_7b_fp8_scaled.safetensors')}",
-        shell=True,
-        check=True,
+        shell=True, check=True,
     )
 
     # VAE: Qwen Image VAE
@@ -119,11 +118,10 @@ def hf_download():
     )
     subprocess.run(
         f"ln -sf {qwen_vae} {os.path.join(vae_dir, 'qwen_image_vae.safetensors')}",
-        shell=True,
-        check=True,
+        shell=True, check=True,
     )
 
-    # LORAs: Qwen Image Lightning (4 steps) + Lenovo LoRA
+    # LORAs
     qwen_lightning = hf_hub_download(
         repo_id="lightx2v/Qwen-Image-Lightning",
         filename="Qwen-Image-Lightning-4steps-V1.0.safetensors",
@@ -131,8 +129,7 @@ def hf_download():
     )
     subprocess.run(
         f"ln -sf {qwen_lightning} {os.path.join(lora_dir, 'Qwen-Image-Lightning-4steps-V1.0.safetensors')}",
-        shell=True,
-        check=True,
+        shell=True, check=True,
     )
 
     lenovo_lora = hf_hub_download(
@@ -142,8 +139,7 @@ def hf_download():
     )
     subprocess.run(
         f"ln -sf {lenovo_lora} {os.path.join(lora_dir, 'lenovo.safetensors')}",
-        shell=True,
-        check=True,
+        shell=True, check=True,
     )
 
     # ESRGAN Upscaler: ITF SkinDiff Detail Lite v1
@@ -154,8 +150,7 @@ def hf_download():
     )
     subprocess.run(
         f"ln -sf {esrgan_model} {os.path.join(upscale_dir, '1x-ITF-SkinDiffDetail-Lite-v1.pth')}",
-        shell=True,
-        check=True,
+        shell=True, check=True,
     )
 
 
