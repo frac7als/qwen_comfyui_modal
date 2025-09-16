@@ -54,8 +54,6 @@ image = image.run_commands(
     "bash -lc 'cd /root/comfy/ComfyUI/custom_nodes && if [ ! -d ComfyUI-Miaoshouai-Tagger ]; then git clone https://github.com/miaoshouai/ComfyUI-Miaoshouai-Tagger.git; fi'",
     # ComfyLiterals
     "bash -lc 'cd /root/comfy/ComfyUI/custom_nodes && if [ ! -d ComfyLiterals ]; then git clone https://github.com/M1kep/ComfyLiterals.git; fi'",
-    # KJNodes (adds Set/Get utilities e.g., Set_FACE)
-    "bash -lc 'cd /root/comfy/ComfyUI/custom_nodes && if [ ! -d ComfyUI-KJNodes ]; then git clone https://github.com/kijai/ComfyUI-KJNodes.git; fi'",
 )
 
 # ------------------------------
