@@ -36,7 +36,7 @@ image = (
 )
 
 # ------------------------------
-# Custom Nodes (install by git clone; pinned to repos) — updated
+# Custom Nodes (install by git clone; pinned to repos) - updated
 # ------------------------------
 image = image.run_commands(
     # Use conditional clones so rebuilds don't fail
