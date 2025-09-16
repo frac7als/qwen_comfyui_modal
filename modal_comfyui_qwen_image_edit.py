@@ -80,10 +80,12 @@ def hf_download():
     vae_dir = "/root/comfy/ComfyUI/models/vae"
     text_enc_dir = "/root/comfy/ComfyUI/models/text_encoders"
     lora_dir = "/root/comfy/ComfyUI/models/loras"
+    upscale_dir = "/root/comfy/ComfyUI/models/upscale_models"
     os.makedirs(diffusion_dir, exist_ok=True)
     os.makedirs(vae_dir, exist_ok=True)
     os.makedirs(text_enc_dir, exist_ok=True)
     os.makedirs(lora_dir, exist_ok=True)
+    os.makedirs(upscale_dir, exist_ok=True)
 
     # Diffusion model: Qwen Image Edit (FP8 e4m3fn)
     qwen_edit = hf_hub_download(
@@ -143,6 +145,7 @@ def hf_download():
         shell=True,
         check=True,
     )
+
     # ESRGAN Upscaler: ITF SkinDiff Detail Lite v1
     esrgan_model = hf_hub_download(
         repo_id="uwg/upscaler",
@@ -154,6 +157,7 @@ def hf_download():
         shell=True,
         check=True,
     )
+
 
 # Persist HF cache between runs
 vol = modal.Volume.from_name("hf-hub-cache", create_if_missing=True)
