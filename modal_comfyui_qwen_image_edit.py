@@ -31,12 +31,12 @@ image = (
     )
     # Install ComfyUI framework with NVIDIA support
     .run_commands(
-        "comfy --skip-prompt install --fast-deps --nvidia --version 0.3.47"
+        "comfy --skip-prompt install --fast-deps --nvidia"
     )
 )
 
 # ------------------------------
-# Custom Nodes (install by git clone; pinned to repos)
+# Custom Nodes (install by git clone; pinned to repos) — updated
 # ------------------------------
 image = image.run_commands(
     # Use conditional clones so rebuilds don't fail
@@ -53,6 +53,9 @@ image = image.run_commands(
     "bash -lc 'cd /root/comfy/ComfyUI/custom_nodes && if [ ! -d ComfyUI-Miaoshouai-Tagger ]; then git clone https://github.com/miaoshouai/ComfyUI-Miaoshouai-Tagger.git; fi'",
     # ComfyLiterals (M1kep)
     "bash -lc 'cd /root/comfy/ComfyUI/custom_nodes && if [ ! -d ComfyLiterals ]; then git clone https://github.com/M1kep/ComfyLiterals.git; fi'",
+,
+    # KJNodes (provides Set/Get nodes like Set_FACE)
+    "bash -lc 'cd /root/comfy/ComfyUI/custom_nodes && if [ ! -d ComfyUI-KJNodes ]; then git clone https://github.com/kijai/ComfyUI-KJNodes.git; fi'",
 )
 
 # ------------------------------
